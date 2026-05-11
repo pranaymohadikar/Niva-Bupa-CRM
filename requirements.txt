@@ -1,0 +1,9 @@
+sqlalchemy
+pandas
+fastapi 
+uvicorn 
+bcrypt 
+openpyxl
+PyJWT
+dotenv
+psycopg2
