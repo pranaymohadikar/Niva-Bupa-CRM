@@ -166,10 +166,16 @@ def hash_pw(password: str) -> str:
         return hashlib.sha256(password.encode()).hexdigest()
 
 def check_pw(password: str, hashed: str) -> bool:
-    try:
-        import bcrypt
-        return bcrypt.checkpw(password.encode(), hashed.encode())
-    except ImportError:
+    # Detect hash format: bcrypt hashes start with $2b$ or $2a$
+    if hashed.startswith("$2b$") or hashed.startswith("$2a$"):
+        try:
+            import bcrypt
+            return bcrypt.checkpw(password.encode(), hashed.encode())
+        except ImportError:
+            # bcrypt hash but no bcrypt library — can't verify
+            return False
+    else:
+        # sha256 hash
         return hashlib.sha256(password.encode()).hexdigest() == hashed
 
 def audit(db: Session, user, role, patient_id, action, section, field, old_val, new_val):
