@@ -13,8 +13,12 @@ from sqlalchemy.orm import sessionmaker, Session
 
 load_dotenv()  # Reads .env file automatically
 
-#DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///crm.db")
-DATABASE_URL = "postgresql://postgres.gatmlcmknckaiqdabkae:Sincemybirth%4094@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///crm.db")
+
+# pg8000 needs postgresql+pg8000:// prefix instead of postgresql://
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+pg8000://", 1)
+
 # SQLite needs check_same_thread; Postgres needs pool_pre_ping
 if DATABASE_URL.startswith("sqlite"):
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
